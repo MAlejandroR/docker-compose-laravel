@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=manuel
+      - MYSQL_PASSWORD=manuel
+      - MYSQL_DATABASE=roles
+    volumes:
+      - "./mysql_data:/bitnami/mysql/data"
+  myapp:
+    image: docker.io/bitnami/laravel:10.0.2
+    container_name: laravel
+    ports:
+      - '8000-8005:8000-8005'
+      - '5170-5175:5170-5175'
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=manuel
+      - DB_PASSWORD=manuel
+      - DB_DATABASE=roles
+    volumes:
+      - './app:/app'
+    depends_on:
+      - mysql
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - 8800:80
+    depends_on:
+      - mysql
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
